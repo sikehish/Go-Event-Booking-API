@@ -21,15 +21,15 @@ type Event struct {
 func (e Event) Save() error {
 	// events = append(events, e)
 	query := `
-	INSERT INTO events (name, description, location, date_time, user_id) VALUES (?, ?, ?, ?)`
+	INSERT INTO events (name, description, location, date_time, user_id) VALUES (?, ?, ?, ?,?)`
 	stmt, err := db.DB.Prepare(query) //Prepare creates a prepared statement for later queries or executions. Multiple queries or executions may be run concurrently from the returned statement.
 	if err != nil {
 		return err
 	}
 
-	defer stmt.Close()
+	defer stmt.Close() //eleases any resources associated with the prepared statement.
 
-	result, err := stmt.Exec(e.Name, e.Description, e.Location, e.DateTime, e.UserID)
+	result, err := stmt.Exec(e.Name, e.Description, e.Location, e.DateTime, e.UserID) //The order in which values have been mentioned in the query string has to be followed
 
 	if err != nil {
 		return err
@@ -41,6 +41,27 @@ func (e Event) Save() error {
 	return err
 }
 
-func GetAllEvents() []Event {
-	return events
+func GetAllEvents() ([]Event, error) {
+	// return events
+	query := "SELECT * FROM events"
+	rows, err := db.DB.Query(query)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close() // If Next is called and returns false and there are no further result sets, the Rows are closed automatically and it will suffice to check the result of Err.
+
+	var events []Event
+
+	for rows.Next() {
+		var event Event
+		err := rows.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID) //the order has to be the same as the order in which the columns were defined
+
+		if err != nil {
+			return nil, err
+		}
+		events = append(events, event)
+	}
+	return events, nil
+
 }

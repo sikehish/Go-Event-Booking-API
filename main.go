@@ -24,7 +24,12 @@ func getEvents(context *gin.Context) {
 	// 	"message": "Hello!",
 	// })
 
-	events := models.GetAllEvents()
+	events, err := models.GetAllEvents()
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch events, Try again later :("})
+	}
+
 	context.JSON(http.StatusOK, events)
 }
 
@@ -34,14 +39,17 @@ func createEvent(context *gin.Context) {
 	err := context.ShouldBindJSON(&event) //event is populated with data. It doesnt return any error if any field is missing, but sing struct tags we can enforce ShouldBindJSON to return an error if a field is missing
 
 	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"message": "Could not parse request data"})
+		context.JSON(http.StatusBadRequest, gin.H{"message": "Data parsing failed :("})
 	}
 
 	event.ID = 1
 	event.UserID = 1
 
-	event.Save()
+	err = event.Save()
 
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not create the event, Try again later :("})
+	}
 	context.JSON(http.StatusCreated, gin.H{"message": "Event created", "event": event})
 
 }
