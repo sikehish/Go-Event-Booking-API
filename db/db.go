@@ -12,7 +12,8 @@ import (
 var DB *sql.DB
 
 func InitDB() {
-	DB, err := sql.Open("sqlite3", "api.db")
+	var err error
+	DB, err = sql.Open("sqlite3", "api.db")
 
 	if err != nil {
 		panic("COuld not connect to the database") //Raising a panic doesnt crash the server but we get a log(message) highlighting the issue
@@ -25,4 +26,26 @@ func InitDB() {
 
 	// Idle connections are those that are not currently being used but are kept open in the connection pool for potential reuse. The connection pool maintains a certain number of idle connections to reduce the overhead of opening and closing connections for each database operation.
 
+	createTables()
+
+}
+
+func createTables() {
+	//Multi line string: CREATE TABLE statement
+	createEventsTable := `
+	CREATE TABLE IF NOT EXISTS events(
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		name TEXT NOT NULL,
+		description TEXT NOT NULL,
+		location TEXT NOT NULL,
+		date_time DATETIME NOT NULL,
+		user_id INTEGER
+	)
+	`
+
+	_, err := DB.Exec(createEventsTable)
+
+	if err != nil {
+		panic("Events rable creation failed:(")
+	}
 }
