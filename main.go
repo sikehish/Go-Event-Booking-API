@@ -28,8 +28,13 @@ func getEvents(context *gin.Context) {
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch events, Try again later :("})
+		return
 	}
 
+	if len(events) == 0 {
+		context.JSON(http.StatusOK, gin.H{"message": "No events found. Create an event!"})
+		return
+	}
 	context.JSON(http.StatusOK, events)
 }
 
@@ -40,6 +45,7 @@ func createEvent(context *gin.Context) {
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Data parsing failed :("})
+		return
 	}
 
 	event.ID = 1
@@ -49,6 +55,7 @@ func createEvent(context *gin.Context) {
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not create the event, Try again later :("})
+		return
 	}
 	context.JSON(http.StatusCreated, gin.H{"message": "Event created", "event": event})
 
