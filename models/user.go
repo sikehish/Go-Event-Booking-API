@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/sikehish/Go-Event-Booking-API/db"
+	"github.com/sikehish/Go-Event-Booking-API/utils"
 )
 
 type User struct {
@@ -18,7 +19,14 @@ func (user *User) Save() error { //Setting user to *User type so that on modifyi
 		return err
 	}
 	defer stmt.Close()
-	result, err := stmt.Exec(user.Email, user.Password)
+
+	hashedPw, err := utils.HashPassword(user.Password)
+
+	if err != nil {
+		return err
+	}
+
+	result, err := stmt.Exec(user.Email, hashedPw)
 	if err != nil {
 		return err
 	}
