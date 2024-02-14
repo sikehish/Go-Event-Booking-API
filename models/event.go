@@ -65,3 +65,17 @@ func GetAllEvents() ([]Event, error) {
 	return events, nil
 
 }
+
+func GetEventByID(id int64) (*Event, error) { //We return pointer to Event instead of Event because we want to return nil instead of empty Event struct(easier to check if the struct is empty)
+	query := "SELECT * FROM events WHERE id = ?"
+	row := db.DB.QueryRow(query, id)
+
+	var event Event
+	err := row.Scan(&event.ID, &event.Name, &event.Description, &event.Location, &event.DateTime, &event.UserID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &event, nil
+}
