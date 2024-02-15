@@ -34,3 +34,11 @@ func (user *User) Save() error { //Setting user to *User type so that on modifyi
 	user.ID = userId
 	return err
 }
+
+func (user User) ValidateCredentials() {
+	query := "SELECT email, password FROM users WHERE email=?"
+	row := db.DB.QueryRow(query, user.Email) 
+	
+	var retrievedPassword
+	row.Scan()
+}
