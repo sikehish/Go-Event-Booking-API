@@ -1,6 +1,8 @@
 package models
 
 import (
+	"errors"
+
 	"github.com/sikehish/Go-Event-Booking-API/db"
 	"github.com/sikehish/Go-Event-Booking-API/utils"
 )
@@ -35,10 +37,24 @@ func (user *User) Save() error { //Setting user to *User type so that on modifyi
 	return err
 }
 
-func (user User) ValidateCredentials() {
-	query := "SELECT email, password FROM users WHERE email=?"
-	row := db.DB.QueryRow(query, user.Email) 
-	
-	var retrievedPassword
-	row.Scan()
+func (user User) ValidateCredentials() error {
+	query := "SELECT password FROM users WHERE email=?"
+	row := db.DB.QueryRow(query, user.Email)
+
+	var retrievedPassword string
+	err := row.Scan(&retrievedPassword)
+
+	if err != nil {
+		// return err
+		return errors.New("Credentials invalid") //If email isnt present
+	}
+
+	isValid := utils.CheckPasswordHash(user.Password, retrievedPassword)
+
+	if !isValid {
+		return errors.New("Credentials invalid") //If password is incorrect
+	}
+
+	return nil
+
 }
