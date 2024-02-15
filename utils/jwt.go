@@ -15,6 +15,6 @@ func GenToken(email string, userId int64) (secret, error) {
 		"exp":    time.Now().Add(time.Hour * 2).Unix(),
 	})
 
-	return token.SignedString(secret)
+	return token.SignedString([]byte(secret))
 
 }

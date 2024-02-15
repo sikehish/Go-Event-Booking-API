@@ -37,12 +37,12 @@ func (user *User) Save() error { //Setting user to *User type so that on modifyi
 	return err
 }
 
-func (user User) ValidateCredentials() error {
-	query := "SELECT password FROM users WHERE email=?"
+func (user *User) ValidateCredentials() error {
+	query := "SELECT id,password FROM users WHERE email=?"
 	row := db.DB.QueryRow(query, user.Email)
 
 	var retrievedPassword string
-	err := row.Scan(&retrievedPassword)
+	err := row.Scan(&user.ID, &retrievedPassword)
 
 	if err != nil {
 		// return err

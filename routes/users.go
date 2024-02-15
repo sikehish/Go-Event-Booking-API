@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sikehish/Go-Event-Booking-API/models"
+	"github.com/sikehish/Go-Event-Booking-API/utils"
 )
 
 func signUp(context *gin.Context) {
@@ -40,10 +41,19 @@ func logIn(context *gin.Context) {
 	err = user.ValidateCredentials()
 
 	if err != nil {
-		context.JSON(http.StatusUnauthorized, gin.H{"message": "COuld not authenticate user."})
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Could not authenticate user."})
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	token, err := utils.GenToken(user.Email, user.ID)
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Could not authenticate user",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{"message": "Login successful", "token": token})
 
 }
