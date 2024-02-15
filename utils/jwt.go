@@ -8,7 +8,7 @@ import (
 
 const secret = "abc123" //temporary
 
-func GenToken(email string, userId int64) (secret, error) {
+func GenToken(email string, userId int64) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"email":  email,
 		"userId": userId,
