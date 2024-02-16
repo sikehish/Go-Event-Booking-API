@@ -67,7 +67,7 @@ func createEvent(context *gin.Context) {
 	//We replace the above lines of code with a middleware(in routes.go)
 
 	var event models.Event
-	err = context.ShouldBindJSON(&event) //event is populated with data. It doesnt return any error if any field is missing, but using struct tags we can enforce ShouldBindJSON to return an error if a field is missing
+	err := context.ShouldBindJSON(&event) //event is populated with data. It doesnt return any error if any field is missing, but using struct tags we can enforce ShouldBindJSON to return an error if a field is missing
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Data parsing failed :("})

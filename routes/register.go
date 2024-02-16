@@ -46,7 +46,7 @@ func eventUnregister(context *gin.Context) { //User unregistering for an event
 	// 	context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not fetch event"})
 	// 	return
 	// }
-	// err = event.Register(userId)
+	// err = event.Unregister(userId)
 	// if err != nil {
 	// 	context.JSON(http.StatusInternalServerError, gin.H{"message": "Could not unregister user :("})
 	// 	return
