@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sikehish/Go-Event-Booking-API/models"
+	"github.com/sikehish/Go-Event-Booking-API/utils"
 )
 
 func getEvents(context *gin.Context) {
@@ -49,15 +50,30 @@ func getEvent(context *gin.Context) {
 
 func createEvent(context *gin.Context) {
 
+	token := context.Request.Header.Get("Authorization")
+
+	if token == "" {
+		context.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Not authorized",
+		})
+		return
+	}
+
+	err := utils.VerifyToken(token)
+
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized"})
+		return
+	}
+
 	var event models.Event
-	err := context.ShouldBindJSON(&event) //event is populated with data. It doesnt return any error if any field is missing, but using struct tags we can enforce ShouldBindJSON to return an error if a field is missing
+	err = context.ShouldBindJSON(&event) //event is populated with data. It doesnt return any error if any field is missing, but using struct tags we can enforce ShouldBindJSON to return an error if a field is missing
 
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"message": "Data parsing failed :("})
 		return
 	}
 
-	event.ID = 1
 	event.UserID = 1
 
 	err = event.Save()
