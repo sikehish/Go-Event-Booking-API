@@ -8,9 +8,9 @@ import (
 )
 
 type User struct {
-	ID       int64
-	Email    string `binding:"required"`
-	Password string `binding:"required"`
+	ID       int64  `json:"id"`
+	Email    string `json:"email" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 func (user *User) Save() error { //Setting user to *User type so that on modifying user.ID, the user entity gets modified and so the response would have the correct ID as opposed to displaying ID:0

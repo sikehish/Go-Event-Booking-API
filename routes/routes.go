@@ -24,6 +24,8 @@ func RegisterRoutes(server *gin.Engine) {
 	server.POST("/signup", signUp)
 	server.POST("/login", logIn)
 
+	server.GET("/events/:id/participants", getParticipants)
+
 	// //Another way of registering a middleware
 	// server.POST("/events", middlewares.Authenticate, createEvent)
 }

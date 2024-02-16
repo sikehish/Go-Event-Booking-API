@@ -36,6 +36,7 @@ func logIn(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{
 			"message": "Data parsing failed :(",
 		})
+		return
 	}
 
 	err = user.ValidateCredentials()

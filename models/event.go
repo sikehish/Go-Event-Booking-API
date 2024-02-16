@@ -137,3 +137,43 @@ func (event Event) Unregister(userId int64) error {
 	_, err = stmt.Exec(event.ID, userId)
 	return err
 }
+
+// ------------------------------------------
+// DTO stands for Data Transfer Object. It is a design pattern used in software development to encapsulate the data that is being transferred between layers or components of a system. The main purpose of a DTO is to provide a way to exchange data between different parts of a program without exposing the internal details of the data structure.
+
+type ParticipantDTO struct {
+	ID    int64  `json:"id"`
+	Email string `json:"email" binding:"required"`
+}
+
+// func MapToParticipantDTO(user User) ParticipantDTO {
+// 	return ParticipantDTO{
+// 		ID:    user.ID,
+// 		Email: user.Email,
+// 	}
+// }
+
+func GetEventParticipants(eventId int64) ([]ParticipantDTO, error) {
+
+	query := `SELECT id, email FROM users WHERE id IN(SELECT user_id FROM registrations WHERE event_id=?)`
+
+	rows, err := db.DB.Query(query, eventId)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close() // If Next is called and returns false and there are no further result sets, the Rows are closed automatically and it will suffice to check the result of Err.
+
+	var participants []ParticipantDTO
+
+	for rows.Next() {
+		var participant ParticipantDTO
+		err := rows.Scan(&participant.ID, &participant.Email) //the order has to be the same as the order in which the columns were defined
+
+		if err != nil {
+			return nil, err
+		}
+		participants = append(participants, participant)
+	}
+	return participants, nil
+}
