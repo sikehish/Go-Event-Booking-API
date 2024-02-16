@@ -21,8 +21,8 @@ func RegisterRoutes(server *gin.Engine) {
 	authGroup.POST("/events/:id/register", eventRegister)
 	authGroup.DELETE("/events/:id/unregister", eventUnregister)
 
-	authGroup.POST("/signup", signUp)
-	authGroup.POST("/login", logIn)
+	server.POST("/signup", signUp)
+	server.POST("/login", logIn)
 
 	// //Another way of registering a middleware
 	// server.POST("/events", middlewares.Authenticate, createEvent)
