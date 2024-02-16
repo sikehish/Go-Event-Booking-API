@@ -52,7 +52,7 @@ func VerifyToken(token string) (int64, error) {
 	}
 
 	// email := claims["email"].(string)
-	userId, ok := claims["userId"].(int64)
+	userId, ok := claims["userId"].(float64) //although userId is of int64, it is stored as float64 in the token
 	//checking for string and int64 is optional as we know for sure that weve set both the fields to string and int64 types respectively
 
 	if !ok {
@@ -72,5 +72,5 @@ func VerifyToken(token string) (int64, error) {
 		return 0, err
 	}
 
-	return userId, nil
+	return int64(userId), nil
 }
